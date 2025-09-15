@@ -1,0 +1,1 @@
+require("dblnz.config.lazy")
