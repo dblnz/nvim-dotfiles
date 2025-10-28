@@ -11,17 +11,14 @@ return {
 		require("mason-lspconfig").setup({
 			automatic_installation = true,
 			ensure_installed = {
+				-- LSP servers only (formatters/linters are handled by mason-tool-installer below)
 				"cssls",
 				"eslint",
-				"flake8",
 				"gopls",
 				"html",
 				"jsonls",
 				"lua_ls",
 				"rust_analyzer",
-				"stylua",
-				"shellcheck",
-				"shfmt",
 				"pyright",
 				"tailwindcss",
 				"ts_ls",
@@ -36,6 +33,9 @@ return {
 				"black", -- python formatter
 				"pylint",
 				"eslint_d",
+				"shellcheck",
+				"shfmt",
+				"flake8",
 			},
 		})
 	end,

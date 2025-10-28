@@ -1,66 +1,20 @@
+
 return {
-	{
-		-- add any tools you want to have installed below
-		"mason-org/mason.nvim",
-		version = "v2.1.0",
-		dependencies = {
-			{ "mason-org/mason-lspconfig.nvim", version = "v2.1.0" },
-			"WhoIsSethDaniel/mason-tool-installer.nvim",
-		},
-		config = function()
-			require("mason").setup()
-
-			require("mason-lspconfig").setup({
-				automatic_installation = true,
-				opts = {
-					ensure_installed = {
-						"cssls",
-						"eslint",
-						"gopls",
-						"html",
-						"jsonls",
-						"lua_ls",
-						"rust_analyzer",
-						"pyright",
-						"tailwindcss",
-						"ts_ls",
-					},
-				},
-			})
-
-			require("mason-tool-installer").setup({
-				ensure_installed = {
-					-- you can do conditional installing
-					{
-						"gopls",
-						condition = function()
-							return vim.fn.executable("go") == 1
-						end,
-					},
-					"prettier",
-					"stylua", -- lua formatter
-					"isort", -- python formatter
-					"black", -- python formatter
-					"pylint",
-					"eslint_d",
-					"shfmt",
-				},
-			})
-		end,
-	},
 	{
 		"neovim/nvim-lspconfig",
 		version = false,
 		dependencies = {
-			"jose-elias-alvarez/typescript.nvim",
-			init = function()
-				require("lazyvim.util").lsp.on_attach(function(_, buffer)
-          -- stylua: ignore
-          vim.keymap.set("n", "<leader>co", "TypescriptOrganizeImports", { buffer = buffer, desc = "Organize Imports" })
-					vim.keymap.set("n", "<leader>cR", "TypescriptRenameFile", { desc = "Rename File", buffer = buffer })
-				end)
-			end,
-
+			{
+				"jose-elias-alvarez/typescript.nvim",
+				init = function()
+					require("lazyvim.util").lsp.on_attach(function(_, buffer)
+						-- stylua: ignore
+						vim.keymap.set("n", "<leader>co", "TypescriptOrganizeImports", { buffer = buffer, desc = "Organize Imports" })
+						vim.keymap.set("n", "<leader>cR", "TypescriptRenameFile", { desc = "Rename File", buffer = buffer })
+					end)
+				end,
+			},
+			"Hoffs/omnisharp-extended-lsp.nvim",
 		},
 		---@class PluginLspOpts
 		opts = {

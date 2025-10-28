@@ -1,6 +1,10 @@
 return {
 	"folke/snacks.nvim",
 	opts = {
+		-- Disable the image module to avoid invalid buffer callback errors
+		image = {
+			enabled = false,
+		},
 		picker = {
 			win = {
 				input = {
