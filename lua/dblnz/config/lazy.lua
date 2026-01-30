@@ -51,3 +51,27 @@ require("lazy").setup({
 		},
 	},
 })
+
+-- Fix: Trigger filetype detection for files opened from snacks explorer
+-- The snacks picker uses bufadd() + :buffer which may not trigger BufReadPost
+-- for filetype detection when the buffer is first displayed.
+-- This workaround detects filetype on BufWinEnter if it's still empty.
+vim.api.nvim_create_autocmd("BufWinEnter", {
+	callback = function()
+		vim.schedule(function()
+			local buf = vim.api.nvim_get_current_buf()
+			local name = vim.api.nvim_buf_get_name(buf)
+			-- Only for real files with empty filetype
+			if
+				vim.api.nvim_buf_is_valid(buf)
+				and vim.bo[buf].filetype == ""
+				and vim.bo[buf].buftype == ""
+				and name ~= ""
+				and vim.fn.isdirectory(name) == 0
+				and vim.fn.filereadable(name) == 1
+			then
+				vim.cmd("filetype detect")
+			end
+		end)
+	end,
+})
