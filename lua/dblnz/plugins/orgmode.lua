@@ -48,7 +48,7 @@ return {
 			org_capture_templates = {
 				t = {
 					description = "Task",
-					template = "* TODO %?\n  SCHEDULED: %t\n",
+					template = "* TODO %?\n",
 					target = global_dir .. "/refile.org",
 				},
 			},
