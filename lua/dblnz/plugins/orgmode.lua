@@ -14,7 +14,7 @@ return {
 		end
 
 		-- Ensure org files exist
-		local files = { "refile.org", "personal.org", "msft.org" }
+		local files = { "refile.org", "personal.org", "meetings.org", "msft.org" }
 		for _, file in ipairs(files) do
 			local path = global_dir .. "/" .. file
 			if vim.fn.filereadable(path) == 0 then
