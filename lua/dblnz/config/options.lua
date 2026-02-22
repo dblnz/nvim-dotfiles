@@ -38,6 +38,9 @@ vim.opt.colorcolumn = "80"
 
 vim.g.mapleader = " "
 
+-- Python provider
+vim.g.python3_host_prog = vim.fn.expand("~/.venvs/neovim/bin/python")
+
 -- The below lines help with line breaking at maximum textwidth
 vim.opt.formatoptions:append("t")
 -- workaround for autoformatting being overwriten
