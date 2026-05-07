@@ -9,6 +9,12 @@ return {
 		opts = {
 			---@type table<string, lazyvim.lsp.Config|boolean>
 			servers = {
+				clangd = {
+					on_attach = function(client, _)
+						client.server_capabilities.documentFormattingProvider = false
+						client.server_capabilities.documentRangeFormattingProvider = false
+					end,
+				},
 				pyright = {},
 				ts_ls = {
 					keys = {
