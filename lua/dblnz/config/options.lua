@@ -1,6 +1,4 @@
--- Options are automatically loaded before lazy.nvim startup
--- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
--- Add any additional options here
+-- General options
 
 vim.opt.spell = true
 vim.opt.spelllang = "en"
@@ -38,21 +36,13 @@ vim.opt.colorcolumn = "80"
 
 vim.g.mapleader = " "
 
--- The below lines help with line breaking at maximum textwidth
+-- Line breaking at maximum textwidth
 vim.opt.formatoptions:append("t")
--- workaround for autoformatting being overwriten
-vim.cmd([[autocmd BufEnter * set formatoptions+=t]])
 vim.opt.textwidth = 80
 vim.opt.wrapmargin = 0
 vim.opt.linebreak = true
 
--- Folding
--- The below command starts VIM with indent folding and switches to manual
--- so one can create new folds using `zf`
-vim.cmd([[
-augroup vimrc
-  au BufReadPre * setlocal foldmethod=indent
-  au BufWinEnter * if &fdm == 'indent' | setlocal foldmethod=manual | endif
-augroup END]])
-vim.opt.foldlevel = 4
-vim.opt.foldclose = "all"
+-- Folding (treesitter-based)
+vim.o.foldmethod = "expr"
+vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.o.foldlevel = 99

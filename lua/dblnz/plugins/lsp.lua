@@ -4,7 +4,6 @@ return {
 	lazy = false,
 	dependencies = {
 		"hrsh7th/cmp-nvim-lsp",
-		"Hoffs/omnisharp-extended-lsp.nvim",
 	},
 	config = function()
 		local capabilities = require("cmp_nvim_lsp").default_capabilities()
@@ -15,13 +14,6 @@ return {
 		})
 
 		-- Server-specific overrides
-		vim.lsp.config("clangd", {
-			on_attach = function(client)
-				client.server_capabilities.documentFormattingProvider = false
-				client.server_capabilities.documentRangeFormattingProvider = false
-			end,
-		})
-
 		vim.lsp.config("lua_ls", {
 			settings = {
 				Lua = {
@@ -35,15 +27,15 @@ return {
 			},
 		})
 
-		vim.lsp.config("omnisharp", {
-			handlers = {
-				["textDocument/definition"] = function(...)
-					return require("omnisharp_extended").handler(...)
-				end,
+		vim.lsp.config("rust_analyzer", {
+			root_markers = { "Cargo.toml", "rust-project.json" },
+			settings = {
+				["rust-analyzer"] = {
+					diagnostics = { enable = true },
+					checkOnSave = true,
+					procMacro = { enable = true },
+				},
 			},
-			enable_roslyn_analyzers = true,
-			organize_imports_on_format = true,
-			enable_import_completion = true,
 		})
 
 		-- Diagnostics
@@ -63,6 +55,22 @@ return {
 			},
 		})
 
+		-- Refresh inlay hints after dynamic capability registration
+		-- (rust-analyzer registers textDocument/inlayHint late via dynamic registration)
+		local orig_handler = vim.lsp.handlers['client/registerCapability']
+		vim.lsp.handlers['client/registerCapability'] = function(err, res, ctx)
+			local result = orig_handler(err, res, ctx)
+			local client = vim.lsp.get_client_by_id(ctx.client_id)
+			if client then
+				vim.schedule(function()
+					for bufnr in pairs(client.attached_buffers) do
+						vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+					end
+				end)
+			end
+			return result
+		end
+
 		-- LSP keymaps on attach
 		vim.api.nvim_create_autocmd("LspAttach", {
 			group = vim.api.nvim_create_augroup("UserLspKeymaps", { clear = true }),
@@ -72,33 +80,16 @@ return {
 					vim.keymap.set(mode, lhs, rhs, { buffer = buf, desc = desc })
 				end
 
+				-- Enable inlay hints for this buffer
+				vim.lsp.inlay_hint.enable(true, { bufnr = buf })
+
 				map("n", "gd", vim.lsp.buf.definition, "Go to definition")
 				map("n", "gD", vim.lsp.buf.declaration, "Go to declaration")
 				map("n", "gr", function()
 					require("telescope.builtin").lsp_references()
 				end, "Go to references")
-				map("n", "gi", vim.lsp.buf.implementation, "Go to implementation")
-				map("n", "K", vim.lsp.buf.hover, "Hover documentation")
-				map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "Code action")
-				map("n", "<leader>rn", vim.lsp.buf.rename, "Rename symbol")
-				map("i", "<C-k>", vim.lsp.buf.signature_help, "Signature help")
 			end,
 		})
 
-		-- Explicitly enable all LSP servers
-		vim.lsp.enable({
-			"lua_ls",
-			"cssls",
-			"eslint",
-			"gopls",
-			"html",
-			"jsonls",
-			"rust_analyzer",
-			"pyright",
-			"tailwindcss",
-			"ts_ls",
-			"clangd",
-			"omnisharp",
-		})
 	end,
 }

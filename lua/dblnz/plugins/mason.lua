@@ -15,7 +15,9 @@ return {
 			"mason-org/mason.nvim",
 			"neovim/nvim-lspconfig",
 		},
-		opts = {},
+		opts = {
+			automatic_enable = true,
+		},
 	},
 	-- 4. mason-tool-installer — ensures formatters/linters are installed (deferred)
 	{
