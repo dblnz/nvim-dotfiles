@@ -28,23 +28,14 @@ return {
 
 		-- Setup orgmode
 		require("orgmode").setup({
-			-- Include all org files in the directory
 			org_agenda_files = { global_dir .. "/**/*" },
-
-			-- Default file for captures
 			org_default_notes_file = global_dir .. "/refile.org",
-
-			-- Refile settings
 			org_refile_targets = {
 				{ maxlevel = 3 },
 			},
 			org_refile_use_outline_path = "file",
 			org_outline_path_complete_in_steps = false,
-
-			-- TODO keywords
 			org_todo_keywords = { "TODO(t)", "IN-PROGRESS(i)", "WAITING(w)", "|", "DONE(d)", "CANCELLED(c)" },
-
-			-- Single capture template
 			org_capture_templates = {
 				t = {
 					description = "Task",
@@ -54,12 +45,18 @@ return {
 			},
 		})
 
-		-- Keymaps
-		local map = vim.keymap.set
-
-		-- Quick open orgfiles directory
-		map("n", "<leader>oG", function()
-			vim.cmd("edit " .. global_dir)
-		end, { desc = "Open orgfiles directory" })
+		-- Quick open orgfiles directory (toggle)
+		local _orgfiles_active = false
+		vim.keymap.set("n", "<leader>oG", function()
+			local api = require("nvim-tree.api")
+			if _orgfiles_active then
+				api.tree.change_root(vim.fn.getcwd())
+				_orgfiles_active = false
+			else
+				api.tree.open({ path = global_dir })
+				api.tree.change_root(global_dir)
+				_orgfiles_active = true
+			end
+		end, { desc = "Toggle orgfiles directory" })
 	end,
 }
