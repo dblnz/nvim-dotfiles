@@ -14,6 +14,8 @@ return {
 			css = { "prettier" },
 			markdown = { "prettier" },
 			sh = { "shfmt" },
+			c = {},
+			cpp = {},
 		},
 		format_on_save = function(bufnr)
 			local ft = vim.bo[bufnr].filetype

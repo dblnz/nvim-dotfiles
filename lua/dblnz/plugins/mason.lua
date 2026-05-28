@@ -27,6 +27,7 @@ return {
 		opts = {
 			ensure_installed = {
 				-- LSP servers
+				"clangd",
 				"lua_ls",
 				"cssls",
 				"eslint",
