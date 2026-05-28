@@ -7,7 +7,6 @@ return {
 			enable = true,
 			additional_vim_regex_highlighting = { "org" },
 		},
-		folds = { enable = true },
 		ensure_installed = {
 			"bash",
 			"git_config",

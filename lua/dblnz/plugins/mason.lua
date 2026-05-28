@@ -1,42 +1,54 @@
 return {
-	-- add any tools you want to have installed below
-	"mason-org/mason.nvim",
-	dependencies = {
-		"mason-org/mason-lspconfig.nvim",
-		"WhoIsSethDaniel/mason-tool-installer.nvim",
+	-- 1. Mason — must load early, not lazily
+	{
+		"mason-org/mason.nvim",
+		lazy = false,
+		priority = 100,
+		opts = {},
 	},
-	config = function()
-		require("mason").setup()
-
-		require("mason-lspconfig").setup({
-			automatic_installation = true,
+	-- 2. nvim-lspconfig — provided by lsp.lua
+	-- 3. mason-lspconfig — bridges Mason and LSP config names
+	{
+		"mason-org/mason-lspconfig.nvim",
+		lazy = false,
+		dependencies = {
+			"mason-org/mason.nvim",
+			"neovim/nvim-lspconfig",
+		},
+		opts = {
+			automatic_enable = true,
+		},
+	},
+	-- 4. mason-tool-installer — ensures formatters/linters are installed (deferred)
+	{
+		"WhoIsSethDaniel/mason-tool-installer.nvim",
+		event = "VeryLazy",
+		dependencies = { "mason-org/mason.nvim" },
+		opts = {
 			ensure_installed = {
-				-- LSP servers only (formatters/linters are handled by mason-tool-installer below)
+				-- LSP servers
+				"clangd",
+				"lua_ls",
 				"cssls",
 				"eslint",
 				"gopls",
 				"html",
 				"jsonls",
-				"lua_ls",
 				"rust_analyzer",
 				"pyright",
 				"tailwindcss",
 				"ts_ls",
-			},
-		})
-
-		require("mason-tool-installer").setup({
-			ensure_installed = {
+				-- Formatters/linters
 				"prettier",
-				"stylua", -- lua formatter
-				"isort", -- python formatter
-				"black", -- python formatter
+				"stylua",
+				"isort",
+				"black",
 				"pylint",
 				"eslint_d",
 				"shellcheck",
 				"shfmt",
 				"flake8",
 			},
-		})
-	end,
+		},
+	},
 }

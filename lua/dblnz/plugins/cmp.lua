@@ -2,26 +2,22 @@ return {
 	"hrsh7th/nvim-cmp",
 	event = "InsertEnter",
 	dependencies = {
-		"hrsh7th/cmp-buffer", -- source for text in buffer
-		"hrsh7th/cmp-emoji",
-		"hrsh7th/cmp-path", -- source for file system paths
+		"hrsh7th/cmp-nvim-lsp",
+		"hrsh7th/cmp-buffer",
+		"hrsh7th/cmp-path",
 		{
 			"L3MON4D3/LuaSnip",
 			version = "v2.*",
-			-- install jsregexp (optional!).
 			build = "make install_jsregexp",
 		},
+		"saadparwaiz1/cmp_luasnip",
 		"rafamadriz/friendly-snippets",
-		"onsails/lspkind.nvim", -- vs-code like pictograms
+		"onsails/lspkind.nvim",
 	},
-	---@param opts cmp.ConfigSchema
-	opts = function(_, opts)
-		table.insert(opts.sources, { name = "emoji" })
-	end,
 	config = function()
 		local cmp = require("cmp")
-		local lspkind = require("lspkind")
 		local luasnip = require("luasnip")
+		local lspkind = require("lspkind")
 
 		require("luasnip.loaders.from_vscode").lazy_load()
 
@@ -47,11 +43,14 @@ return {
 				{ name = "buffer" },
 				{ name = "path" },
 			}),
+			formatting = {
+				format = lspkind.cmp_format({
+					mode = "symbol_text",
+					maxwidth = 50,
+				}),
+			},
 		})
 
-		vim.cmd([[
-      set completeopt=menuone,noinsert,noselect
-      highlight! default link CmpItemKind CmpItemMenuDefault
-    ]])
+		vim.opt.completeopt = { "menuone", "noinsert", "noselect" }
 	end,
 }
